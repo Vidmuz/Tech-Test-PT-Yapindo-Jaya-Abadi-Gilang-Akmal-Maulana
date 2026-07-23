@@ -52,7 +52,7 @@ export function UserDetailView({ username }: UserDetailViewProps) {
   if (isError || !user) {
     return (
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-        <ErrorState error={error as any} onRetry={() => refetch()} />
+        <ErrorState error={error ?? undefined} onRetry={() => refetch()} />
       </div>
     );
   }

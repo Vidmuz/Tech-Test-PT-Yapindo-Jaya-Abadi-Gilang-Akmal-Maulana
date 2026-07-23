@@ -72,20 +72,51 @@ export function SearchContent() {
     enabled: type === "users" && hasQuery,
   });
 
-  const active = type === "repositories" ? repoQuery : userQuery;
   const {
-    data,
-    isLoading,
-    isError,
-    error,
-    refetch,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = active;
+    data: repoData,
+    isLoading: isRepoLoading,
+    isError: isRepoError,
+    error: repoError,
+    refetch: refetchRepo,
+    fetchNextPage: fetchNextRepoPage,
+    hasNextPage: repoHasNextPage,
+    isFetchingNextPage: isFetchingNextRepoPage,
+  } = repoQuery;
 
-  const items = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data]);
-  const totalCount = data?.pages[0]?.total_count ?? 0;
+  const {
+    data: userData,
+    isLoading: isUserLoading,
+    isError: isUserError,
+    error: userError,
+    refetch: refetchUser,
+    fetchNextPage: fetchNextUserPage,
+    hasNextPage: userHasNextPage,
+    isFetchingNextPage: isFetchingNextUserPage,
+  } = userQuery;
+
+  const isRepoType = type === "repositories";
+  const isLoading = isRepoType ? isRepoLoading : isUserLoading;
+  const isError = isRepoType ? isRepoError : isUserError;
+  const error = isRepoType ? repoError : userError;
+  const refetch = isRepoType ? refetchRepo : refetchUser;
+  const fetchNextPage = isRepoType ? fetchNextRepoPage : fetchNextUserPage;
+  const hasNextPage = isRepoType ? repoHasNextPage : userHasNextPage;
+  const isFetchingNextPage = isRepoType ? isFetchingNextRepoPage : isFetchingNextUserPage;
+
+  const repoItems = useMemo(
+    () => repoData?.pages.flatMap((page) => page.items as GithubRepo[]) ?? [],
+    [repoData]
+  );
+
+  const userItems = useMemo(
+    () => userData?.pages.flatMap((page) => page.items as GithubUser[]) ?? [],
+    [userData]
+  );
+
+  const items = isRepoType ? repoItems : userItems;
+  const totalCount = isRepoType
+    ? repoData?.pages[0]?.total_count ?? 0
+    : userData?.pages[0]?.total_count ?? 0;
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
@@ -102,7 +133,7 @@ export function SearchContent() {
       ) : isLoading ? (
         <SearchGridSkeleton type={type === "repositories" ? "repo" : "user"} />
       ) : isError ? (
-        <ErrorState error={error as any} onRetry={() => refetch()} />
+        <ErrorState error={error ?? undefined} onRetry={() => refetch()} />
       ) : items.length === 0 ? (
         <EmptyState onReset={() => updateParams({ q: null })} />
       ) : (
@@ -126,9 +157,9 @@ export function SearchContent() {
             animate="visible"
             className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3"
           >
-            {type === "repositories"
-              ? (items as GithubRepo[]).map((repo) => <RepoCard key={repo.id} repo={repo} />)
-              : (items as GithubUser[]).map((user) => <UserCard key={user.id} user={user} />)}
+            {isRepoType
+              ? repoItems.map((repo) => <RepoCard key={repo.id} repo={repo} />)
+              : userItems.map((user) => <UserCard key={user.id} user={user} />)}
           </motion.div>
 
           <InfiniteScrollTrigger
