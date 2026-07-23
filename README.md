@@ -129,25 +129,6 @@ NEXT_PUBLIC_GITHUB_TOKEN=your_token_here
 
 Aplikasi mengekstrak data dari GitHub REST API melalui layer service di folder `services`. Data fetching dan caching dikelola oleh TanStack Query, sedangkan komponen UI membaca state dari hook feature seperti `useRepoSearch`, `useUserSearch`, `useRepoDetail`, dan `useUserDetail`.
 
-### Endpoint utama yang digunakan
-
-- `/search/repositories`
-- `/search/users`
-- `/repos/{owner}/{repo}`
-- `/repos/{owner}/{repo}/languages`
-- `/repos/{owner}/{repo}/contributors`
-- `/repos/{owner}/{repo}/readme`
-- `/users/{username}`
-- `/users/{username}/repos`
-
-## Manajemen state
-
-State aplikasi dibagi menjadi:
-
-- state UI lokal dengan React `useState`
-- state URL query parameter untuk pencarian dan filter
-- state server-side / remote data yang dikelola oleh TanStack Query
-- state tema yang dikelola oleh `next-themes`
 
 ## Routing
 
@@ -166,6 +147,70 @@ Aplikasi menyediakan pengalaman yang lebih baik untuk kondisi berikut:
 - empty state saat query tidak ada hasil
 - error state saat request gagal, termasuk rate limit GitHub API atau tidak ada jaringan
 - tombol retry pada error state
+
+## Keputusan teknis penting dan trade-off
+
+### 1. Menggunakan Next.js App Router
+
+Keputusan ini dipilih karena aplikasi memiliki struktur route yang jelas untuk halaman landing, pencarian, detail repository, dan detail user. App Router juga membuat pengelolaan layout dan metadata halaman lebih terstruktur.
+
+Trade-off:
+- Kelebihan: struktur routing lebih modern dan modular.
+- Kekurangan: memerlukan pola pengembangan yang lebih disiplin agar route dan data fetching tetap konsisten.
+
+### 2. Menggunakan TanStack Query untuk semua fetching data
+
+Semua data GitHub diambil melalui hook feature yang berbasis React Query. Ini memberi keuntungan berupa cache, stale time, retry policy, dan kemampuan infinite query.
+
+Trade-off:
+- Kelebihan: pengelolaan data remote menjadi lebih mudah dan performa lebih baik.
+- Kekurangan: menambah lapisan abstraction dibandingkan fetch biasa, tetapi ini sebanding dengan kompleksitas aplikasi.
+
+### 3. Menyimpan state pencarian pada URL query parameter
+
+Search param seperti `q`, `type`, `sort`, `order`, dan `language` dipakai untuk menjaga state hasil pencarian tetap shareable dan bisa di-refresh kembali.
+
+Trade-off:
+- Kelebihan: URL berfungsi sebagai sumber state yang mudah dibagikan.
+- Kekurangan: logika update query parameter harus dikelola dengan hati-hati agar tidak merusak state UI.
+
+### 4. Menggunakan reusable UI component untuk loading, empty, dan error
+
+Component seperti `SkeletonCard`, `EmptyState`, dan `ErrorState` dipakai berulang pada halaman search dan detail.
+
+Trade-off:
+- Kelebihan: konsistensi UX lebih baik, dan pengembangan lebih cepat.
+- Kekurangan: component reusable perlu dirancang agar fleksibel, karena satu component bisa dipakai di banyak konteks.
+
+### 5. Menggunakan render README langsung di UI
+
+README repository diproses dengan `react-markdown`, `remark-gfm`, dan `rehype-highlight` agar konten markdown bisa tampil rapi di halaman detail repository.
+
+Trade-off:
+- Kelebihan: pengalaman eksplorasi repositori terasa lengkap.
+- Kekurangan: README yang sangat besar bisa membuat halaman tampak padat dan perlu optimisasi pengelolaan layout.
+
+## Hal yang akan saya tambahkan atau perbaiki jika punya waktu lebih
+
+- Menambahkan fitur search autocomplete dan history pencarian terakhir.
+- Menambahkan pagination manual selain infinite scroll agar pengalaman navigasi lebih eksplisit.
+- Menambahkan caching hasil API yang lebih detail dan strategi prefetch pada halaman detail.
+- Menambahkan unit test dan integration test untuk service dan hook.
+- Menambahkan debounce yang benar-benar dipakai pada input search agar request lebih efisien.
+- Menambahkan fitur bookmark atau favorit repository/user.
+- Menambahkan error fallback yang lebih baik untuk beberapa kasus rate limit dan response GitHub yang tidak standar.
+
+## Perkiraan waktu pengerjaan
+
+Secara kasar, pengerjaan proyek ini memerlukan waktu sekitar:
+
+- **Persiapan project dan konfigurasi awal**: 1 jam
+- **Pengembangan service, hooks, dan type data**: 2 jam
+- **Pembuatan layout, komponen reusable, dan theme UI**: 2 jam
+- **Pembuatan halaman pencarian dan detail**: 3 jam
+- **Polishing, loading state, error handling, dan dokumentasi**: 1 jam
+
+Total estimasi pengerjaan: **sekitar 9 jam** untuk versi yang sudah ada saat ini.
 
 
 
