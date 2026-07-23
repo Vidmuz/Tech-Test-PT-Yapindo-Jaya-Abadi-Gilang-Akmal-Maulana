@@ -1,0 +1,327 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+
+/* ============================================================
+   DESIGN TOKENS — Light Mode
+   ============================================================ */
+@layer base {
+  :root {
+    --background: 0 0% 99%;
+    --foreground: 220 14% 9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 14% 9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 14% 9%;
+
+    --primary: 220 90% 56%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 95%;
+    --secondary-foreground: 220 14% 25%;
+
+    --muted: 220 14% 95%;
+    --muted-foreground: 220 8% 52%;
+
+    --accent: 220 14% 94%;
+    --accent-foreground: 220 14% 15%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 220 90% 56%;
+
+    --radius: 0.625rem;
+
+    /* Custom tokens */
+    --gradient-from: #667eea;
+    --gradient-to: #764ba2;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.4);
+    --shadow-glow: 0 0 40px rgba(102, 126, 234, 0.15);
+  }
+
+  /* ============================================================
+     DESIGN TOKENS — Dark Mode
+     ============================================================ */
+  .dark {
+    --background: 222 20% 7%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 20% 9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 20% 9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217 25% 16%;
+    --secondary-foreground: 210 40% 85%;
+
+    --muted: 217 25% 14%;
+    --muted-foreground: 215 20% 55%;
+
+    --accent: 217 25% 15%;
+    --accent-foreground: 210 40% 90%;
+
+    --destructive: 0 63% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 217 25% 18%;
+    --input: 217 25% 18%;
+    --ring: 217 91% 60%;
+
+    /* Custom tokens */
+    --glass-bg: rgba(13, 17, 23, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.06);
+    --shadow-glow: 0 0 60px rgba(59, 130, 246, 0.12);
+  }
+}
+
+/* ============================================================
+   BASE RESETS
+   ============================================================ */
+@layer base {
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: "Inter", system-ui, sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground;
+  }
+
+  /* Focus ring */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Typography */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold tracking-tight;
+  }
+}
+
+/* ============================================================
+   UTILITY CLASSES
+   ============================================================ */
+@layer utilities {
+  /* Glassmorphism */
+  .glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-text-blue {
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Shimmer loading animation */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 25%,
+      hsl(var(--accent)) 50%,
+      hsl(var(--muted)) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.8s ease-in-out infinite;
+  }
+
+  /* Card hover glow */
+  .card-glow:hover {
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* Animated gradient border */
+  .gradient-border {
+    position: relative;
+    border-radius: var(--radius);
+  }
+
+  .gradient-border::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: calc(var(--radius) + 1px);
+    background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .gradient-border:hover::before {
+    opacity: 1;
+  }
+
+  /* Noise texture overlay */
+  .noise::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Line clamp utilities */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* ============================================================
+   MARKDOWN STYLES (README Viewer)
+   ============================================================ */
+.markdown-body {
+  @apply text-foreground leading-7;
+  font-size: 0.9375rem;
+}
+
+.markdown-body h1 {
+  @apply text-2xl font-bold mt-8 mb-4 pb-2 border-b border-border;
+}
+
+.markdown-body h2 {
+  @apply text-xl font-semibold mt-6 mb-3 pb-2 border-b border-border;
+}
+
+.markdown-body h3 {
+  @apply text-lg font-semibold mt-5 mb-2;
+}
+
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  @apply font-semibold mt-4 mb-2;
+}
+
+.markdown-body p {
+  @apply mb-4 text-muted-foreground;
+}
+
+.markdown-body a {
+  @apply text-primary underline decoration-primary/40 hover:decoration-primary transition-colors;
+}
+
+.markdown-body ul {
+  @apply list-disc pl-6 mb-4 space-y-1;
+}
+
+.markdown-body ol {
+  @apply list-decimal pl-6 mb-4 space-y-1;
+}
+
+.markdown-body li {
+  @apply text-muted-foreground;
+}
+
+.markdown-body blockquote {
+  @apply border-l-4 border-primary/30 pl-4 py-1 my-4 text-muted-foreground italic bg-muted/30 rounded-r-md;
+}
+
+.markdown-body code:not(pre code) {
+  @apply bg-muted text-foreground px-1.5 py-0.5 rounded text-sm font-mono;
+}
+
+.markdown-body pre {
+  @apply bg-muted border border-border rounded-lg p-4 overflow-x-auto mb-4;
+}
+
+.markdown-body pre code {
+  @apply text-sm font-mono text-foreground bg-transparent p-0;
+}
+
+.markdown-body table {
+  @apply w-full border-collapse mb-4 text-sm;
+}
+
+.markdown-body th {
+  @apply bg-muted border border-border px-4 py-2 font-semibold text-left;
+}
+
+.markdown-body td {
+  @apply border border-border px-4 py-2 text-muted-foreground;
+}
+
+.markdown-body tr:nth-child(even) td {
+  @apply bg-muted/30;
+}
+
+.markdown-body img {
+  @apply max-w-full rounded-lg my-4;
+}
+
+.markdown-body hr {
+  @apply border-border my-6;
+}
