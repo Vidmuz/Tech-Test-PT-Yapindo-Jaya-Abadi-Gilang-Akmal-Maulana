@@ -101,11 +101,38 @@ export default function HomePage() {
             }
           />
 
-          {/* Quick search chips */}
-         
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {QUICK_SEARCHES.map((item) => (
+              <button
+                key={item}
+                type="button"
+                onClick={() => handleSearch(item)}
+                className="rounded-full border border-border bg-background/80 px-3 py-1 text-xs text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </motion.div>
+
+        <motion.div
+          variants={fadeIn}
+          initial="hidden"
+          animate="visible"
+          className="mt-10 grid w-full max-w-4xl grid-cols-2 gap-3 sm:grid-cols-4"
+        >
+          {STATS.map(({ icon: Icon, label, value }) => (
+            <div
+              key={label}
+              className="rounded-xl border border-border bg-card/80 p-4 text-center shadow-sm"
+            >
+              <Icon className="mx-auto mb-2 h-4 w-4 text-primary" />
+              <div className="text-xs text-muted-foreground">{label}</div>
+              <div className="mt-1 text-sm font-semibold text-foreground">{value}</div>
+            </div>
+          ))}
         </motion.div>
       </section>
-      
     </div>
   );
 }

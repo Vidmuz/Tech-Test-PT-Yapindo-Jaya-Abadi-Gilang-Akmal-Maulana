@@ -12,7 +12,6 @@ import {
   GitFork,
   AlertCircle,
   Clock,
-  Eye,
   Scale,
   Lock,
   Globe,

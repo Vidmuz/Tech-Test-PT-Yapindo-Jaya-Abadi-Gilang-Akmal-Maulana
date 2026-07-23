@@ -49,7 +49,7 @@ export function InfiniteScrollTrigger({
           animate={{ opacity: 1 }}
           className="text-xs text-muted-foreground"
         >
-          You've reached the end
+          You&apos;ve reached the end
         </motion.p>
       )}
     </div>
